@@ -3,6 +3,48 @@ Stock Monitor polls the Stock Data Provider regularly to retrieve target stock p
 stored on S3. Each stock price is tested against defined price threshold and when the condition is meet a message is 
 sent to subscribers via SNS.
 
+## Informational Message
+
+A message sent to users when a condition is meet has the following format:
+
+```shell
+Stock <ticker> reached the price R$<actual-price> at <date-time>.
+Conditional: <bellow|above>
+Threshold: <baseline-price>
+```
+
+## Configuration
+
+Stocking monitoring is based on conditions. Conditions have the following attributes:
+
+```json
+{
+  "stock": "<stock-ticker>",
+  "trigger": "<bellow|above (default)>",
+  "baseline": <price>
+  "repeat": <true|false (default)>
+}
+```
+
+- **stock** - stock ticker
+- **trigger** - type of condition that triggers this condition
+  - *above* (default) - trigger if stock price is above baseline
+  - *bellow* - trigger if stock price is bellow baseline
+- **baseline** - target stock price used to compare against trigger price
+- **repeat** - resend notifications if condition keeps being meet in consecutive executions. Default is *false* to 
+  dont repeat
+
+A monitoring configuration file stored on S3 is just a set of conditions:
+
+```json
+[
+  {"stock": "AERI3", "trigger":"bellow", "baseline": 6.95 },
+  {"stock": "AERI3", "baseline": 8 },
+  {"stock": "TAEE4", "trigger":"bellow", "baseline": 11.50 },
+  {"stock": "TAEE4", "trigger":"bellow", "baseline": 11.30, "repeat" true }
+]
+```
+
 ## Architecture
 
 ![Config Creator Architecture](doc/stock_monitor_arch.png)
@@ -29,3 +71,4 @@ The solution has the following components:
 7. **If condition triggered previously**
    * **AND NOT** configured to repeat, go back to step 2
    * **AND** configured to repeat, create and publish information message to SNS
+
