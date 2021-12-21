@@ -15,18 +15,18 @@ Threshold: <baseline-price>
 
 ## Configuration
 
-Stocking monitoring is based on conditions. Conditions have the following attributes:
+Stock monitoring is based on conditions which have the following attributes:
 
 ```json
 {
-  "stock": "<stock-ticker>",
+  "ticker": "<stock-ticker>",
   "trigger": "<bellow|above (default)>",
   "baseline": <price>
   "repeat": <true|false (default)>
 }
 ```
 
-- **stock** - stock ticker
+- **ticker** - stock ticker
 - **trigger** - type of condition that triggers this condition
   - *above* (default) - trigger if stock price is above baseline
   - *bellow* - trigger if stock price is bellow baseline
@@ -38,10 +38,10 @@ A monitoring configuration file stored on S3 is just a set of conditions:
 
 ```json
 [
-  {"stock": "AERI3", "trigger":"bellow", "baseline": 6.95 },
-  {"stock": "AERI3", "baseline": 8 },
-  {"stock": "TAEE4", "trigger":"bellow", "baseline": 11.50 },
-  {"stock": "TAEE4", "trigger":"bellow", "baseline": 11.30, "repeat" true }
+  {"ticker": "AERI3", "trigger":"bellow", "baseline": 6.95 },
+  {"ticker": "AERI3", "baseline": 8 },
+  {"ticker": "TAEE4", "trigger":"bellow", "baseline": 11.50 },
+  {"ticker": "TAEE4", "trigger":"bellow", "baseline": 11.30, "repeat": true }
 ]
 ```
 
