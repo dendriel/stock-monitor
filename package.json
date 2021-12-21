@@ -1,0 +1,22 @@
+{
+  "name": "stock-monitor",
+  "version": "1.0.0",
+  "description": "Function to monitor stock prices",
+  "main": "local-run.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dendriel/stock-monitor.git"
+  },
+  "author": "Vitor Rozsa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dendriel/stock-monitor/issues"
+  },
+  "homepage": "https://github.com/dendriel/stock-monitor#readme"
+}

@@ -1,7 +1,7 @@
 
 const triggerEvaluator = {
-  above:  (baseline, actual) => actual > baseline,
-  bellow: (baseline, actual) => actual < baseline,
+  above:  (target, actual) => actual > target,
+  bellow: (target, actual) => actual < target,
 }
 
 
@@ -10,8 +10,8 @@ function log(condition, message) {
 }
 
 function createNotification(condition, stockPricesData) {
-  return `Stock ${condition.ticker} reached the price R${stockPricesData.price} at ${stockPricesData.date}.\n` +
-         `Conditional: ${condition.trigger}\n` +
+  return `Stock ${condition.ticker} reached the price R\$${stockPricesData.price} at ${stockPricesData.date}.\n` +
+         `Conditional: ${getConditionTrigger(condition)}\n` +
          `Threshold: ${condition.price}`
 }
 
@@ -48,7 +48,7 @@ function hasNotificationToSend(condition, stockPricesData) {
   }
 
   let previousPriceEntry = stockPricesData[stockPricesData.length - 2]
-  if (isConditionMeet(condition, previousPriceEntry)) {
+  if (isConditionMeet(condition, previousPriceEntry.price)) {
     log(condition, 'Notification already sent in last execution')
     return false
   }
@@ -56,17 +56,17 @@ function hasNotificationToSend(condition, stockPricesData) {
   return true
 }
 
+function getConditionTrigger(condition) {
+  return condition.trigger ? condition.trigger : 'above'
+}
+
 function isConditionMeet(condition, price) {
-  return triggerEvaluator[condition.trigger](condition.baseline, price)
+  const trigger = getConditionTrigger(condition)
+  return triggerEvaluator[trigger](condition.price, price)
 }
 
 function processCondition(condition) {
   log(condition, `Processing: ${JSON.stringify(condition)}`)
-
-  if (triggerEvaluator[condition.trigger] === undefined) {
-    log(condition, `Invalid trigger type \"${condition.trigger}\"`)
-    return
-  }
 
   let stockPricesData = getStockPricesData(condition.ticker)
   if (stockPricesData.length === 0) {
@@ -87,12 +87,11 @@ function processCondition(condition) {
     return
   }
 
-  const notification = createNotification(condition, stockPricesData)
+  const notification = createNotification(condition, lastPriceEntry)
   log(condition, notification)
 
   // send message to SNS
 }
-
 
 exports.monitor = (config) => {
   console.log(`Monitor called with configuration: \"${JSON.stringify(config)}\"`)

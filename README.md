@@ -10,7 +10,7 @@ A message sent to users when a condition is meet has the following format:
 ```shell
 Stock <ticker> reached the price R$<actual-price> at <date-time>.
 Conditional: <bellow|above>
-Threshold: <baseline-price>
+Price: <target-price>
 ```
 
 ## Configuration
@@ -21,16 +21,16 @@ Stock monitoring is based on conditions which have the following attributes:
 {
   "ticker": "<stock-ticker>",
   "trigger": "<bellow|above (default)>",
-  "baseline": <price>
+  "price": <target-price>
   "repeat": <true|false (default)>
 }
 ```
 
 - **ticker** - stock ticker
 - **trigger** - type of condition that triggers this condition
-  - *above* (default) - trigger if stock price is above baseline
-  - *bellow* - trigger if stock price is bellow baseline
-- **baseline** - target stock price used to compare against trigger price
+  - *above* (default) - trigger if stock price is above target price
+  - *bellow* - trigger if stock price is bellow target price
+- **price** - target stock price used to compare against trigger price
 - **repeat** - resend notifications if condition keeps being meet in consecutive executions. Default is *false* to 
   dont repeat
 
@@ -38,10 +38,10 @@ A monitoring configuration file stored on S3 is just a set of conditions:
 
 ```json
 [
-  {"ticker": "AERI3", "trigger":"bellow", "baseline": 6.95 },
-  {"ticker": "AERI3", "baseline": 8 },
-  {"ticker": "TAEE4", "trigger":"bellow", "baseline": 11.50 },
-  {"ticker": "TAEE4", "trigger":"bellow", "baseline": 11.30, "repeat": true }
+  {"ticker": "AERI3", "trigger":"bellow", "price": 6.95 },
+  {"ticker": "AERI3", "price": 8 },
+  {"ticker": "TAEE4", "trigger":"bellow", "price": 11.50 },
+  {"ticker": "TAEE4", "trigger":"bellow", "price": 11.30, "repeat": true }
 ]
 ```
 
