@@ -6,7 +6,6 @@ const triggerEvaluator = {
   bellow: (target, actual) => actual < target,
 }
 
-
 function log(condition, message) {
   console.log(`[${condition.ticker}] ${message}`)
 }
