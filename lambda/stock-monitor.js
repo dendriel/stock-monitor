@@ -75,7 +75,12 @@ function processCondition(condition) {
   notificationService.sendNotification(notification)
 }
 
-exports.monitor = (config) => {
+function processConditions(config) {
   console.log(`Monitor called with configuration: \"${JSON.stringify(config)}\"`)
   config.forEach(processCondition)
+}
+
+module.exports = {
+  processConditions: processConditions,
+  createNotification: createNotification
 }

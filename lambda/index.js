@@ -1,11 +1,11 @@
-const { monitor } = require('./stock-monitor.')
+const { processConditions } = require('./stock-monitor')
 
 exports.handler = async (event) => {
-    console.log(JSON.stringify(event))
+//    console.log(JSON.stringify(event))
 
 
     let config = getConfiguration()
-    monitor(config)
+    processConditions(config)
 
     return { statusCode: 200 };
 };

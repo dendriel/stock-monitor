@@ -17,11 +17,11 @@ Price: <target-price>
 
 Stock monitoring is based on conditions which have the following attributes:
 
-```json
+```
 {
   "ticker": "<stock-ticker>",
   "trigger": "<bellow|above (default)>",
-  "price": <target-price>
+  "price": <target-price>,
   "repeat": <true|false (default)>
 }
 ```
