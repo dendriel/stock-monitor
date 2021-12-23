@@ -1,4 +1,5 @@
 const { processConditions } = require('./stock-monitor')
+const configurationService = require('./service/configuration.service')
 
 exports.handler = async (event) => {
 //    console.log(JSON.stringify(event))

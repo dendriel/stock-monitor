@@ -1,0 +1,6 @@
+[
+  { "ticker": "AERI3", "trigger":"bellow", "price": 6.4 },
+  { "ticker": "AERI3", "price": 7 },
+  { "ticker": "TAEE4", "trigger":"bellow", "price": 11.5 },
+  { "ticker": "TAEE4", "trigger":"bellow", "price": 11.3, "repeat": true }
+]
