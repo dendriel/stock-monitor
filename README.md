@@ -5,7 +5,7 @@ sent to subscribers via SNS.
 
 ## Informational Message
 
-A message sent to users when a condition is meet has the following format:
+The message sent to users when a condition is meet has the following format:
 
 ```shell
 Stock <ticker> reached the price R$<actual-price> at <date-time>.
@@ -32,9 +32,9 @@ Stock monitoring is based on conditions which have the following attributes:
   - *bellow* - trigger if stock price is bellow target price
 - **price** - target stock price used to compare against trigger price
 - **repeat** - resend notifications if condition keeps being meet in consecutive executions. Default is *false* to 
-  dont repeat
+  don't repeat
 
-A monitoring configuration file stored on S3 is just a set of conditions:
+A monitoring configuration file stored in S3 is just a set of conditions:
 
 ```json
 [
