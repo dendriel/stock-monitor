@@ -155,4 +155,29 @@ describe("Stock Monitor", () => {
     expect(notificationServiceSpy)
     .not.toBeCalled()
   })
+
+  test('it should process each condition from configuration', () => {
+    const ticker = "PAGS34"
+    const condition = { ticker: ticker, price: 8, repeat: true }
+    const configuration = [
+      condition,
+      condition,
+      condition,
+      condition,
+      condition,
+    ]
+
+    stockService.getPricesByTicker.mockImplementation(() => [
+      {price: 8.08, date: "13/12/21 10:00"},
+      {price: 8.00, date: "13/12/21 10:10"},
+      {price: 7.94, date: "13/12/21 10:30"},
+      {price: 10.9, date: "13/12/21 10:40"},
+      {price: 10.5, date: "13/12/21 10:50"}
+    ])
+
+    processConditions(configuration)
+
+    expect(notificationService.sendNotification)
+    .toBeCalledTimes(configuration.length)
+  })
 })

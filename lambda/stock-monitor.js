@@ -76,7 +76,10 @@ function processCondition(condition) {
 
 function processConditions(config) {
   console.log(`Monitor called with configuration: \"${JSON.stringify(config)}\"`)
-  config.forEach(processCondition)
+
+  if (config) {
+    config.forEach(processCondition)
+  }
 }
 
 module.exports = {
