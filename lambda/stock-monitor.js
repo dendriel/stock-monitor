@@ -68,20 +68,19 @@ async function processCondition(condition) {
       return
     }
 
-    const notification = createNotification(condition, lastPriceEntry)
-    log(condition, notification)
-
-    // send message to SNS
-    notificationService.sendNotification(notification)
+    return createNotification(condition, lastPriceEntry)
 }
 
-async function processConditions(bucket, file) {
+async function processConditions(bucket, file, topic) {
     const config = await configurationService.getConfiguration(bucket, file)
 
     console.log(`Monitor loaded configuration: \"${JSON.stringify(config)}\"`)
 
     for (const condition of config) {
-        await processCondition(condition)
+        const notification = await processCondition(condition)
+        if (notification) {
+            await notificationService.sendNotification(topic, notification)
+        }
     }
 }
 

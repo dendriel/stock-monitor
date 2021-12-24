@@ -12,8 +12,9 @@ const { notificationService } = require('../lambda/service/notification.service'
 
 const notificationServiceSpy = jest.spyOn(notificationService, 'sendNotification').mockImplementation()
 
-const bucket = "dummyBucket"
-const file = "dummyFile"
+const bucket = 'dummyBucket'
+const file = 'dummyFile'
+const topic = 'dummyTopic'
 
 describe("Stock Monitor", () => {
   beforeEach(() => {
@@ -28,7 +29,7 @@ describe("Stock Monitor", () => {
     ${100.01}   | ${200}      | ${undefined}
     ${8}        | ${7.50}     | ${'bellow'}
     ${6.75}     | ${6.74}     | ${'bellow'}
-    ${99}       | ${98}       | ${'bellow'}  
+    ${99}       | ${98}       | ${'bellow'}
   `('it should notify when $actualPrice (actual) is $trigger $targetPrice (target)', async ({
                                                                                                 targetPrice,
                                                                                                 actualPrice,
@@ -40,9 +41,9 @@ describe("Stock Monitor", () => {
     const lastPriceEntry = {price: actualPrice, date: "13/12/21 10:50"}
     mockPricesData(lastPriceEntry)
 
-    await processConditions(bucket, file)
+    await processConditions(bucket, file, topic)
 
-    assertExecution(bucket, file, ticker, condition, lastPriceEntry)
+    assertExecution(bucket, file, topic, ticker, condition, lastPriceEntry)
   })
 
   test.each`
@@ -68,9 +69,9 @@ describe("Stock Monitor", () => {
     const lastPriceEntry = {price: actualPrice, date: "13/12/21 10:50"}
     mockPricesData(lastPriceEntry, { price: previousPrice, date: "13/12/21 10:40" })
 
-    await processConditions(bucket, file)
+    await processConditions(bucket, file, topic)
 
-    assertExecution(bucket, file, ticker, condition, lastPriceEntry)
+    assertExecution(bucket, file, topic, ticker, condition, lastPriceEntry)
   })
 
   test.each`
@@ -99,7 +100,7 @@ describe("Stock Monitor", () => {
         { price: previousPrice, date: "13/12/21 10:40" }
     )
 
-    await processConditions(bucket, file)
+    await processConditions(bucket, file, topic)
 
     expect(configurationService.getConfiguration)
         .toHaveBeenCalledWith(bucket, file)
@@ -131,7 +132,7 @@ describe("Stock Monitor", () => {
 
     mockPricesData({ price: actualPrice, date: "13/12/21 10:50" })
 
-    await processConditions(bucket, file)
+    await processConditions(bucket, file, topic)
 
     assertExecutionWithoutNotification(bucket, file, ticker)
   })
@@ -142,7 +143,7 @@ describe("Stock Monitor", () => {
 
     stockService.getPricesByTicker.mockImplementation(() => [])
 
-    await processConditions(bucket, file)
+    await processConditions(bucket, file, topic)
 
     assertExecutionWithoutNotification(bucket, file, ticker)
   })
@@ -162,7 +163,7 @@ describe("Stock Monitor", () => {
 
     configurationService.getConfiguration.mockImplementation(() => config)
 
-    await processConditions(bucket, file)
+    await processConditions(bucket, file, topic)
 
     expect(configurationService.getConfiguration)
         .toHaveBeenCalledWith(bucket, file)
@@ -196,7 +197,7 @@ describe("Stock Monitor", () => {
     stockService.getPricesByTicker.mockImplementation(() => prices)
   }
 
-  function assertExecution(bucket, file, ticker, condition, lastPriceEntry) {
+  function assertExecution(bucket, file, topic, ticker, condition, lastPriceEntry) {
     expect(configurationService.getConfiguration)
         .toHaveBeenCalledWith(bucket, file)
 
@@ -205,7 +206,7 @@ describe("Stock Monitor", () => {
 
     const expectedNotification = createNotification(condition, lastPriceEntry)
     expect(notificationServiceSpy)
-        .toHaveBeenCalledWith(expectedNotification)
+        .toHaveBeenCalledWith(topic, expectedNotification)
   }
 
   function assertExecutionWithoutNotification(bucket, file, ticker) {

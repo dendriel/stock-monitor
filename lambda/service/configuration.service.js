@@ -17,9 +17,9 @@ async function getConfiguration(bucket, file) {
         const { Body } = await client.send(command)
         const data = await streamToString(Body)
         return JSON.parse(data)
-    } catch (err) {
-        console.log("Failed to get configuration", err);
-        throw err
+    } catch (e) {
+        console.log("Failed to get configuration", e);
+        throw Error(e)
     }
 }
 
