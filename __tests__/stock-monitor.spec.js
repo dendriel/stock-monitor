@@ -35,31 +35,14 @@ describe("Stock Monitor", () => {
                                                                                                 trigger
                                                                                               }) => {
     const ticker = "AERI3"
-    const condition = {ticker: ticker, trigger: trigger, price: targetPrice, repeat: true}
-    const config = [condition]
+    const condition = mockConfig(ticker, trigger, targetPrice, true)
 
     const lastPriceEntry = {price: actualPrice, date: "13/12/21 10:50"}
-    stockService.getPricesByTicker.mockImplementation(() => [
-      {price: 8.08, date: "13/12/21 10:00"},
-      {price: 8.00, date: "13/12/21 10:10"},
-      {price: 7.94, date: "13/12/21 10:30"},
-      {price: 7.88, date: "13/12/21 10:40"},
-      lastPriceEntry
-    ])
-
-    configurationService.getConfiguration.mockImplementation(() => config)
+    mockPricesData(lastPriceEntry)
 
     await processConditions(bucket, file)
 
-    expect(configurationService.getConfiguration)
-        .toHaveBeenCalledWith(bucket, file)
-
-    expect(stockService.getPricesByTicker)
-        .toHaveBeenCalledWith(ticker)
-
-    const expectedNotification = createNotification(condition, lastPriceEntry)
-    expect(notificationServiceSpy)
-        .toHaveBeenCalledWith(expectedNotification)
+    assertExecution(bucket, file, ticker, condition, lastPriceEntry)
   })
 
   test.each`
@@ -80,31 +63,14 @@ describe("Stock Monitor", () => {
                                                                                              repeat
                                                                                            }) => {
     const ticker = "VALE3"
-    const condition = {ticker: ticker, trigger: trigger, price: targetPrice, repeat: repeat}
-    const config = [condition]
+    const condition = mockConfig(ticker, trigger, targetPrice, repeat)
 
     const lastPriceEntry = {price: actualPrice, date: "13/12/21 10:50"}
-    stockService.getPricesByTicker.mockImplementation(() => [
-      {price: 8.08, date: "13/12/21 10:00"},
-      {price: 8.00, date: "13/12/21 10:10"},
-      {price: 7.94, date: "13/12/21 10:30"},
-      {price: previousPrice, date: "13/12/21 10:40"},
-      lastPriceEntry
-    ])
-
-    configurationService.getConfiguration.mockImplementation(() => config)
+    mockPricesData(lastPriceEntry, { price: previousPrice, date: "13/12/21 10:40" })
 
     await processConditions(bucket, file)
 
-    expect(configurationService.getConfiguration)
-        .toHaveBeenCalledWith(bucket, file)
-
-    expect(stockService.getPricesByTicker)
-        .toHaveBeenCalledWith(ticker)
-
-    const expectedNotification = createNotification(condition, lastPriceEntry)
-    expect(notificationServiceSpy)
-        .toHaveBeenCalledWith(expectedNotification)
+    assertExecution(bucket, file, ticker, condition, lastPriceEntry)
   })
 
   test.each`
@@ -126,19 +92,12 @@ describe("Stock Monitor", () => {
                                                                                                 repeat
                                                                                               }) => {
     const ticker = "TAEE4"
-    const condition = {ticker: ticker, trigger: trigger, price: targetPrice, repeat: repeat}
-    const config = [condition]
+    mockConfig(ticker, trigger, targetPrice, repeat)
 
-    const lastPriceEntry = {price: actualPrice, date: "13/12/21 10:50"}
-    stockService.getPricesByTicker.mockImplementation(() => [
-      {price: 8.08, date: "13/12/21 10:00"},
-      {price: 8.00, date: "13/12/21 10:10"},
-      {price: 7.94, date: "13/12/21 10:30"},
-      {price: previousPrice, date: "13/12/21 10:40"},
-      lastPriceEntry
-    ])
-
-    configurationService.getConfiguration.mockImplementation(() => config)
+    mockPricesData(
+        { price: actualPrice, date: "13/12/21 10:50" },
+        { price: previousPrice, date: "13/12/21 10:40" }
+    )
 
     await processConditions(bucket, file)
 
@@ -168,51 +127,24 @@ describe("Stock Monitor", () => {
                                                                                            repeat
                                                                                          }) => {
     const ticker = "PAGS34"
-    const condition = {ticker: ticker, trigger: trigger, price: targetPrice, repeat: repeat}
-    const config = [condition]
+    mockConfig(ticker, trigger, targetPrice, repeat)
 
-    stockService.getPricesByTicker.mockImplementation(() => [
-      {price: 8.08, date: "13/12/21 10:00"},
-      {price: 8.00, date: "13/12/21 10:10"},
-      {price: 7.94, date: "13/12/21 10:30"},
-      {price: 10.9, date: "13/12/21 10:40"},
-      {price: actualPrice, date: "13/12/21 10:50"}
-    ])
-
-    configurationService.getConfiguration.mockImplementation(() => config)
+    mockPricesData({ price: actualPrice, date: "13/12/21 10:50" })
 
     await processConditions(bucket, file)
 
-    expect(configurationService.getConfiguration)
-        .toHaveBeenCalledWith(bucket, file)
-
-    expect(stockService.getPricesByTicker)
-        .toHaveBeenCalledWith(ticker)
-
-    expect(notificationServiceSpy)
-        .not.toBeCalled()
+    assertExecutionWithoutNotification(bucket, file, ticker)
   })
 
   test('it should not notify if prices data is empty', async () => {
     const ticker = "TAEE4"
-    const condition = {ticker: ticker, price: 8}
-    const config = [condition]
+    mockConfig(ticker, undefined, 8, undefined)
 
     stockService.getPricesByTicker.mockImplementation(() => [])
 
-    configurationService.getConfiguration.mockImplementation(() => config)
-
     await processConditions(bucket, file)
 
-    expect(configurationService.getConfiguration)
-        .toHaveBeenCalledWith(bucket, file)
-
-
-    expect(stockService.getPricesByTicker)
-        .toHaveBeenCalledWith(ticker)
-
-    expect(notificationServiceSpy)
-        .not.toBeCalled()
+    assertExecutionWithoutNotification(bucket, file, ticker)
   })
 
   test('it should process each condition from configuration', async () => {
@@ -226,13 +158,7 @@ describe("Stock Monitor", () => {
       condition,
     ]
 
-    stockService.getPricesByTicker.mockImplementation(() => [
-      {price: 8.08, date: "13/12/21 10:00"},
-      {price: 8.00, date: "13/12/21 10:10"},
-      {price: 7.94, date: "13/12/21 10:30"},
-      {price: 10.9, date: "13/12/21 10:40"},
-      {price: 10.5, date: "13/12/21 10:50"}
-    ])
+    mockPricesData({price: 10.9, date: "13/12/21 10:40"}, {price: 10.5, date: "13/12/21 10:50"})
 
     configurationService.getConfiguration.mockImplementation(() => config)
 
@@ -244,4 +170,52 @@ describe("Stock Monitor", () => {
     expect(notificationService.sendNotification)
         .toBeCalledTimes(config.length)
   })
+
+  function mockConfig(ticker, trigger, targetPrice, repeat) {
+    const condition = {ticker: ticker, trigger: trigger, price: targetPrice, repeat: repeat}
+    const config = [condition]
+
+    configurationService.getConfiguration.mockImplementation(() => config)
+
+    return condition
+  }
+
+  function mockPricesData(lastPriceEntry, previousPriceEntry) {
+    let prices = [
+      {price: 8.08, date: "13/12/21 10:00"},
+      {price: 8.00, date: "13/12/21 10:10"},
+      {price: 7.94, date: "13/12/21 10:30"},
+      {price: 7.88, date: "13/12/21 10:40"}
+    ]
+
+    if (previousPriceEntry) {
+      prices.push(previousPriceEntry)
+    }
+
+    prices.push(lastPriceEntry)
+    stockService.getPricesByTicker.mockImplementation(() => prices)
+  }
+
+  function assertExecution(bucket, file, ticker, condition, lastPriceEntry) {
+    expect(configurationService.getConfiguration)
+        .toHaveBeenCalledWith(bucket, file)
+
+    expect(stockService.getPricesByTicker)
+        .toHaveBeenCalledWith(ticker)
+
+    const expectedNotification = createNotification(condition, lastPriceEntry)
+    expect(notificationServiceSpy)
+        .toHaveBeenCalledWith(expectedNotification)
+  }
+
+  function assertExecutionWithoutNotification(bucket, file, ticker) {
+    expect(configurationService.getConfiguration)
+        .toHaveBeenCalledWith(bucket, file)
+
+    expect(stockService.getPricesByTicker)
+        .toHaveBeenCalledWith(ticker)
+
+    expect(notificationServiceSpy)
+        .not.toBeCalled()
+  }
 })
