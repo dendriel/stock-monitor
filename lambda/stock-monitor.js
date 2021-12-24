@@ -46,43 +46,43 @@ function isConditionMeet(condition, price) {
   return triggerEvaluator[trigger](condition.price, price)
 }
 
-function processCondition(condition) {
-  log(condition, `Processing: ${JSON.stringify(condition)}`)
+async function processCondition(condition) {
+    log(condition, `Processing: ${JSON.stringify(condition)}`)
 
-  let stockPricesData = stockService.getPricesByTicker(condition.ticker)
-  if (stockPricesData.length === 0) {
-    log(condition, "No prices data found.")
-    return
-  }
+    const prices = await stockService.getPricesByTicker(condition.ticker)
+    if (!prices || prices.length === 0) {
+      log(condition, 'Prices data is empty!')
+      return
+    }
 
-  let lastPriceEntry = stockPricesData[stockPricesData.length - 1]
-  log(condition, `Last price is ${lastPriceEntry.price} from ${lastPriceEntry.date}`)
+    let lastPriceEntry = prices[prices.length - 1]
+    log(condition, `Last price is ${lastPriceEntry.price} from ${lastPriceEntry.date}`)
 
-  if (!isConditionMeet(condition, lastPriceEntry.price)) {
-    log(condition, `Condition not meet.`)
-    return
-  }
+    if (!isConditionMeet(condition, lastPriceEntry.price)) {
+      log(condition, `Condition not meet.`)
+      return
+    }
 
-  if (!hasNotificationToSend(condition, stockPricesData)) {
-    log(condition, 'Has no notification to send.')
-    return
-  }
+    if (!hasNotificationToSend(condition, prices)) {
+      log(condition, 'Has no notification to send.')
+      return
+    }
 
-  const notification = createNotification(condition, lastPriceEntry)
-  log(condition, notification)
+    const notification = createNotification(condition, lastPriceEntry)
+    log(condition, notification)
 
-  // send message to SNS
-  notificationService.sendNotification(notification)
+    // send message to SNS
+    notificationService.sendNotification(notification)
 }
 
 async function processConditions(bucket, file) {
-  const config = await configurationService.getConfiguration(bucket, file)
+    const config = await configurationService.getConfiguration(bucket, file)
 
-  console.log(`Monitor loaded configuration: \"${JSON.stringify(config)}\"`)
+    console.log(`Monitor loaded configuration: \"${JSON.stringify(config)}\"`)
 
-  if (config) {
-    config.forEach(processCondition)
-  }
+    for (const condition of config) {
+        await processCondition(condition)
+    }
 }
 
 module.exports = {

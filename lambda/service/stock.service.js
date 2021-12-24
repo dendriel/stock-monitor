@@ -1,26 +1,14 @@
+const { restService } = require('./rest.service')
 
+async function getPricesByTicker(ticker) {
+    console.log(`Requesting prices data for ${ticker} stock.`)
+    const { data } = await restService.api.get(`/acao/tickerprice?ticker=${ticker}&type=0&currences%5B%5D=1`)
 
-function getPricesByTicker(ticker) {
-  // TODO: hit data provider
-
-    // Get from provider
-    let responseData = [
-      {
-          prices: [
-              {price: 8.08, date: "13/12/21 10:00"},
-              {price: 8.00, date: "13/12/21 10:10"},
-              {price: 7.94, date: "13/12/21 10:30"},
-              {price: 8.04, date: "13/12/21 10:40"},
-              {price: 8.05, date: "13/12/21 10:50"}
-          ]
-      }
-    ]
-  
-    if (!responseData || responseData.length === 0) {
-      return []
+    if (data === undefined || data.length === 0) {
+        throw Error(`Unexpected response from Stock Data Provider: ${data}`)
     }
-  
-    return responseData[0].prices
+
+    return data[0].prices
 }
 
 exports.stockService = {

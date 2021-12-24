@@ -72,3 +72,19 @@ The solution has the following components:
    * **AND NOT** configured to repeat, go back to step 2
    * **AND** configured to repeat, create and publish information message to SNS
 
+
+## Environment
+
+The following configuration may be set as environment variables:
+
+- **BUCKET** - S3 bucket to look for configuration
+  - _default_: `stock-monitor`
+- **CONFIG** - key to look configuration file inside bucket (may be a full file path)
+  - _default_: `conditions.json`
+- **REGION** - S3 bucket region
+  - _default_: `sa-east-1`
+- **PRICES_PROVIDER_URL** - URL to Stock Data provider in the format `protocol + hostname`
+  - _default_: `https://statusinvest.com.br`
+- **PRICESS_PROVIVER_USER_AGENT** - user agent header value
+  - _default_: `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36`
+

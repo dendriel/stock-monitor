@@ -7,7 +7,7 @@ const start = async () =>  {
     try {
         await processConditions(bucket, configFile)
     } catch (e) {
-        console.log("Stock Monitor execution has failed!")
+        console.log(`Stock Monitor execution has failed! ${e}`)
     }
 }
 
