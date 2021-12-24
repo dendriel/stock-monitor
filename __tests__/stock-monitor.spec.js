@@ -1,14 +1,14 @@
 const { test, expect } = require('@jest/globals');
-const { processConditions, createNotification } = require('../lambda/stock-monitor')
+const { processConditions, createNotification } = require('../stock-monitor/stock-monitor')
 
-jest.mock('../lambda/service/stock.service')
-const { stockService } = require('../lambda/service/stock.service')
+jest.mock('../stock-monitor/service/stock.service')
+const { stockService } = require('../stock-monitor/service/stock.service')
 
-jest.mock('../lambda/service/configuration.service')
-const { configurationService } = require('../lambda/service/configuration.service')
+jest.mock('../stock-monitor/service/configuration.service')
+const { configurationService } = require('../stock-monitor/service/configuration.service')
 
-jest.mock('../lambda/service/notification.service')
-const { notificationService } = require('../lambda/service/notification.service')
+jest.mock('../stock-monitor/service/notification.service')
+const { notificationService } = require('../stock-monitor/service/notification.service')
 
 const notificationServiceSpy = jest.spyOn(notificationService, 'sendNotification').mockImplementation()
 

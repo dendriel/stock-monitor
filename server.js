@@ -1,4 +1,4 @@
-const { handler } = require('./lambda/index')
+const { handler } = require('./stock-monitor/index')
 
 const start = async () =>  {
     await handler()
