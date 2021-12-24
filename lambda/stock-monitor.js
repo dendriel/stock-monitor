@@ -1,5 +1,6 @@
 const { stockService } = require('./service/stock.service')
 const { notificationService } = require('./service/notification.service')
+const { configurationService } = require('./service/configuration.service')
 
 const triggerEvaluator = {
   above:  (target, actual) => actual > target,
@@ -74,8 +75,10 @@ function processCondition(condition) {
   notificationService.sendNotification(notification)
 }
 
-function processConditions(config) {
-  console.log(`Monitor called with configuration: \"${JSON.stringify(config)}\"`)
+async function processConditions(bucket, file) {
+  const config = await configurationService.getConfiguration(bucket, file)
+
+  console.log(`Monitor loaded configuration: \"${JSON.stringify(config)}\"`)
 
   if (config) {
     config.forEach(processCondition)
