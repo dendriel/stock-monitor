@@ -14,6 +14,7 @@ const streamToString = (stream) =>
 async function getConfiguration(bucket, file) {
     try {
         const command = new GetObjectCommand({Bucket: bucket, Key: file})
+        console.log("Retrieving configurations...")
         const { Body } = await client.send(command)
         const data = await streamToString(Body)
         return JSON.parse(data)

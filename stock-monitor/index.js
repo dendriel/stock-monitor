@@ -6,8 +6,11 @@ const topic = process.env.TOPIC
 
 exports.handler = async () => {
     try {
+        console.log("Stock Monitor has started")
         await processConditions(bucket, configFile, topic)
     } catch (e) {
         console.log(`Stock Monitor execution has failed! ${e}`)
     }
+
+    return { statusCode: 200 }
 }
