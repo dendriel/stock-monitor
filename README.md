@@ -47,6 +47,8 @@ A monitoring configuration file stored in S3 is just a set of conditions:
 
 ## Architecture
 
+### Sketch
+
 ![Config Creator Architecture](doc/stock_monitor_arch.png)
 
 The solution has the following components:
@@ -55,6 +57,12 @@ The solution has the following components:
 - **SNS topic** - provides a way to notify users (subscribers) when a price change triggers some condition
 - **Lambda function** - glue together all services and runs the solution logic to test stock prices against conditions
 
+### Expanded
+
+![Config Creator Architecture](doc/stock_monitor_arch_expanded.png)
+
+*Obs.:* I've Opted to use a NAT Gateway instead of VPC endpoints because lambda would need an internet connection to 
+the Stock data provider anyway.
 
 ## Solution Flowchart
 
@@ -90,3 +98,26 @@ The following configuration may be set as environment variables:
 - **PRICES_PROVIDER_USER_AGENT** - user agent when requesting data from stock data provider
   - _default_: `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36`
 
+## Run Locally
+
+Execute unit tests:
+```shell
+npm test
+```
+
+Execute the function locally, but using real resources:
+```shell
+npm start
+```
+To execute locally you must setup:
+
+- An AWS SNS Topic and configure the environment variable **TOPIC** with the topic ARN
+- An AWS S3 Bucket that can be specified via environement variables **BUCKET** and **CONFIG**
+- Setup the AWS credentials so the local running function can use AWS resources
+
+### AWS Credentials
+When running locally, this service depends on AWS credentials file located in the user home to be allowed to
+s3:GetObject from S3 and sns:Publish to SNS.
+
+Check AWS docs on 
+how to setup the credentials: https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html
