@@ -4,7 +4,7 @@ resource "aws_s3_bucket" "stock-monitor" {
 
   tags = {
     Name        = "Stock Monitor"
-    Environment = "Prod"
+    Environment = "prod"
   }
 }
 
