@@ -130,8 +130,17 @@ From `terraform/` directory:
 
 Create the infrastructure:
 ```shell
-terraform apply
+terraform apply -auto-approve -var='email_subscriber=user@provider.com'
 ```
+
+- `auto-approve` is used to auto confirm the deploy. Skip this option if you want to take a look in everything that 
+  will be created by terraform
+- `-var'email_subscriber=user@provider.com'` defines the testing e-mail to receive prices notification. AWS 
+  will send an e-mail to confirm the subscription
+  - The subscribing e-mail can also be set inside terraform.tfvars in the format 
+    `email_subscriber=user@provider.com`
+- `conditions.json` file from project folder is used as conditions configuration. Can be changed by editing `terraform.tfvars`
+- `terraform.tfvars`file allows customizing all available environment variables
 
 List everything created and managed by terraform:
 ```shell
@@ -147,5 +156,7 @@ terraform state show <type.resource>
 
 Destroy the infrastructure:
 ```shell
-terraform destroy
+terraform destroy -auto-approve -var='email_subscriber=dummy'
 ```
+
+- terraform still requires vars to be defined, but they aren't required while destroying in this project 

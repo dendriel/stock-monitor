@@ -18,6 +18,16 @@ variable config_source {
   description = "Filepath to configuration to be deployed"
 }
 
+variable topic {
+  type        = string
+  description = "SNS topic name"
+}
+
+variable email_subscriber {
+  type        = string
+  description = "Target e-mail to receive notifications (must accept subscription via AWS confirmation e-mail)"
+}
+
 variable prices_provider {
   type = object({
     url        = string
