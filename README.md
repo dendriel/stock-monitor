@@ -1,7 +1,7 @@
 # Stock Monitor
-Stock Monitor polls the Stock Data Provider regularly to retrieve target stock price data based on a configuration 
-stored on S3. Each stock price is tested against defined price threshold and when the condition is meet a message is 
-sent to subscribers via SNS.
+Stock Monitor is a **Lambda function** that polls the **Stock Data Provider** regularly to retrieve target stock price 
+data based on a configuration stored in **S3**. Each stock price is tested against defined price threshold; when the 
+condition is meet a message is sent to subscribers via **SNS**.
 
 ## Informational Message
 
@@ -61,7 +61,7 @@ The solution has the following components:
 
 ![Config Creator Architecture](doc/stock_monitor_arch_expanded.png)
 
-*Obs.:* I've Opted to use a NAT Gateway instead of VPC endpoints because lambda would need an internet connection to 
+*Obs.:* I've opted to use a NAT Gateway instead of VPC endpoints because lambda would need an internet connection to 
 the Stock data provider anyway.
 
 ## Solution Flowchart
@@ -89,7 +89,7 @@ The following configuration may be set as environment variables:
   - **MUST** be specified as there is no default value.
 - **BUCKET** - S3 bucket to look for configuration
   - _default_: `stock-monitor`
-- **CONFIG** - key to look configuration file inside bucket (may be a full file path)
+- **CONFIG** - key to look configuration file inside bucket (can be a full file path)
   - _default_: `conditions.json`
 - **REGION** - S3 bucket region
   - _default_: `sa-east-1`
@@ -119,5 +119,33 @@ To execute locally you must setup:
 When running locally, this service depends on AWS credentials file located in the user home to be allowed to
 s3:GetObject from S3 and sns:Publish to SNS.
 
-Check AWS docs on 
-how to setup the credentials: https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html
+Check AWS docs on how to setup the credentials: https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html
+
+## Run with terraform
+
+Terraform creates all necessary infrastructure automatically in AWS Cloud. It only required to setup AWS credentials 
+so terraform can issue commands to AWS.
+
+From `terraform/` directory:
+
+Create the infrastructure:
+```shell
+terraform apply
+```
+
+List everything created and managed by terraform:
+```shell
+terraform state list
+```
+
+List a target resource status:
+```shell
+terraform state show <type.resource>
+```
+
+**Get `<type.resource>` combination from `terraform state list` command output*
+
+Destroy the infrastructure:
+```shell
+terraform destroy
+```

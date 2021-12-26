@@ -71,8 +71,8 @@ async function processCondition(condition) {
     return createNotification(condition, lastPriceEntry)
 }
 
-async function processConditions(bucket, file, topic) {
-    const config = await configurationService.getConfiguration(bucket, file)
+async function processConditions(bucket, configKey, topic) {
+    const config = await configurationService.getConfiguration(bucket, configKey)
 
     console.log(`Monitor loaded configuration: \"${JSON.stringify(config)}\"`)
 
