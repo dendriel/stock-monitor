@@ -89,7 +89,7 @@ The following configuration may be set as environment variables:
   - **MUST** be specified as there is no default value.
 - **BUCKET** - S3 bucket to look for configuration
   - _default_: `stock-monitor`
-- **CONFIG** - key to look configuration file inside bucket (can be a full file path)
+- **CONFIG_KEY** - key to look configuration file inside bucket (can be a full file path)
   - _default_: `conditions.json`
 - **REGION** - S3 bucket region
   - _default_: `sa-east-1`
@@ -126,7 +126,16 @@ Check AWS docs on how to setup the credentials: https://docs.aws.amazon.com/sdk-
 Terraform creates all necessary infrastructure automatically in AWS Cloud. It only required to setup AWS credentials 
 so terraform can issue commands to AWS.
 
+**WARNING**: terraform launch create many resources and links, but it has some problems when shutting down the setup.
+Some resources may have to be removed manually. So use terraform only if you are confident you can remove some 
+resources manually (they are listed along the destroy command doc).
+
 From `terraform/` directory:
+
+Initialize terraform:
+```shell
+terraform init
+```
 
 Create the infrastructure:
 ```shell
@@ -159,4 +168,10 @@ Destroy the infrastructure:
 terraform destroy -auto-approve -var='email_subscriber=dummy'
 ```
 
-- terraform still requires vars to be defined, but they aren't required while destroying in this project 
+- Terraform still requires vars to be defined, but they aren't required while destroying in this project 
+- Pending subscriptions can't be removed manually and are automatically deleted by AWS after some time (3 days)
+
+**WARNING:** Terraform has a bug that prevents it from removing the lambda ENIs, so the destroying execution gets 
+stuck while removing the Security Group because there is attached ENIs to it. To remove manually, you can try deleting 
+the Security Group to get the list of ENIs to remove them (if they show as in use, just wait a few minutes before 
+retrying).

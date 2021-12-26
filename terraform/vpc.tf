@@ -12,7 +12,7 @@ module "vpc" {
   single_nat_gateway = true
 
   tags = {
-    Terraform = "true"
-    Environment = "prod"
+    terraform = "true"
+    environment = "prod"
   }
 }

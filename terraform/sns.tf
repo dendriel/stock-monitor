@@ -1,4 +1,4 @@
-resource "aws_sns_topic" "notifications" {
+resource "aws_sns_topic" "this" {
   name = var.topic
 
   tags = {
@@ -7,8 +7,8 @@ resource "aws_sns_topic" "notifications" {
   }
 }
 
-resource "aws_sns_topic_subscription" "email-target" {
-  topic_arn = aws_sns_topic.notifications.arn
+resource "aws_sns_topic_subscription" "target_email" {
+  topic_arn = aws_sns_topic.this.arn
   protocol  = "email"
   endpoint  = var.email_subscriber
 }
