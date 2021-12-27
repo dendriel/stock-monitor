@@ -37,8 +37,6 @@ resource "aws_lambda_function" "this" {
   }
 }
 
-// TODO: setup cron trigger from cloud watch
-
 resource "aws_security_group" "this" {
   name        = "Stock Monitor"
   description = "Egress Only"
@@ -77,62 +75,6 @@ resource "aws_iam_role" "this" {
 EOF
 }
 
-resource "aws_iam_role_policy_attachment" "basic" {
-  role       = aws_iam_role.this.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-}
-
-resource "aws_iam_role_policy_attachment" "vpc" {
-  role       = aws_iam_role.this.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
-}
-
-resource "aws_iam_policy" "s3_get_object" {
-  name        = "stock-monitor-s3-get-object"
-  description = "Stock Monitor"
-
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": ["s3:GetObject"],
-      "Effect": "Allow",
-      "Resource": "${aws_s3_bucket.this.arn}/*"
-    }
-  ]
-}
-EOF
-}
-
-resource "aws_iam_role_policy_attachment" "s3_get_object" {
-  role       = aws_iam_role.this.name
-  policy_arn = aws_iam_policy.s3_get_object.arn
-}
-
-resource "aws_iam_policy" "sns_publish" {
-  name        = "stock-monitor-sns-publish"
-  description = "Stock Monitor"
-
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": ["sns:Publish"],
-      "Effect": "Allow",
-      "Resource": "${aws_sns_topic.this.arn}"
-    }
-  ]
-}
-EOF
-}
-
-resource "aws_iam_role_policy_attachment" "sns_publish" {
-  role       = aws_iam_role.this.name
-  policy_arn = aws_iam_policy.sns_publish.arn
-}
-
 resource "aws_cloudwatch_log_group" "this" {
   name = "/aws/lambda/${aws_lambda_function.this.function_name}"
 
@@ -144,7 +86,6 @@ data "archive_file" "code" {
 
   source_dir  = "${path.module}/../stock-monitor"
   output_path = "${path.module}/stock-monitor.zip"
-  excludes    = [ "../stock-monitor/nodejs" ]
 
   depends_on = [
     null_resource.code
@@ -157,38 +98,5 @@ resource "null_resource" "code" {
     index = sha256(file("${path.module}/../stock-monitor/index.js"))
     handler = sha256(file("${path.module}/../stock-monitor/stock-monitor.js"))
     service = sha256(join("",fileset(path.module, "../stock-monitor/service/*.js")))
-  }
-}
-
-resource "aws_lambda_layer_version" "modules" {
-  filename   = "nodejs.zip"
-  layer_name = "stock-monitor-modules"
-
-  compatible_runtimes = ["nodejs14.x"]
-
-  depends_on = [
-    data.archive_file.modules
-  ]
-}
-
-data "archive_file" "modules" {
-  type = "zip"
-
-  source_dir  = "${path.module}/../stock-monitor/nodejs"
-  output_path = "${path.module}/nodejs.zip"
-
-  depends_on = [
-    null_resource.modules
-  ]
-}
-
-resource "null_resource" "modules" {
-  provisioner "local-exec" {
-    command = "cd ${path.module}/../stock-monitor/nodejs && npm install"
-  }
-
-  triggers = {
-    package = sha256(file("${path.module}/../stock-monitor/nodejs/package.json"))
-    lock = sha256(file("${path.module}/../stock-monitor/nodejs/package-lock.json"))
   }
 }

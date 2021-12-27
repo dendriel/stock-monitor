@@ -28,6 +28,11 @@ variable email_subscriber {
   description = "Target e-mail to receive notifications (must accept subscription via AWS confirmation e-mail)"
 }
 
+variable interval {
+  type        = string
+  description = "Interval between executions. It must be specified as the value of a 'rate expression' https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#RateExpressions"
+}
+
 variable prices_provider {
   type = object({
     url        = string
