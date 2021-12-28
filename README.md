@@ -171,7 +171,8 @@ terraform destroy -auto-approve -var='email_subscriber=dummy'
 - Terraform still requires vars to be defined, but they aren't required while destroying in this project 
 - Pending subscriptions can't be removed manually and are automatically deleted by AWS after some time (3 days)
 
-**WARNING:** Terraform has a bug that prevents it from removing the lambda ENIs, so the destroying execution gets 
+**WARNING:** Terraform has a bug that prevents it from removing the lambda ENIs, so destroying command gets 
 stuck while removing the Security Group because there is attached ENIs to it. To remove manually, you can try deleting 
 the Security Group to get the list of ENIs to remove them (if they show as in use, just wait a few minutes before 
-retrying).
+retrying). If is not possible to remove the ENIs even after waiting, stop terraform destroy operation and retry 
+deleting the ENIs after that. Then, re-execute terraform destroy command.
