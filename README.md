@@ -61,8 +61,6 @@ The solution has the following components:
 
 ![Config Creator Architecture](doc/stock_monitor_arch_expanded.png)
 
-*Obs.:* I've opted to use a NAT Gateway instead of VPC endpoints because lambda would need an internet connection to 
-the Stock data provider anyway.
 
 ## Solution Flowchart
 
@@ -148,7 +146,8 @@ terraform apply -auto-approve -var='email_subscriber=user@provider.com'
   will send an e-mail to confirm the subscription
   - The subscribing e-mail can also be set inside terraform.tfvars in the format 
     `email_subscriber=user@provider.com`
-- `conditions.json` file from project folder is used as conditions configuration. Can be changed by editing `terraform.tfvars`
+- `conditions.json` file from project folder is used as conditions configuration. The target file can be changed by 
+  editing `terraform.tfvars`
 - `terraform.tfvars`file allows customizing all available environment variables
 
 List everything created and managed by terraform:
