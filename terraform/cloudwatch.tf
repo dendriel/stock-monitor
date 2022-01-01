@@ -1,7 +1,7 @@
 resource "aws_cloudwatch_event_rule" "stock_monitor_trigger" {
   name                = "stock-monitor-trigger"
   description         = "Fires Stock Monitor Lambda regularly"
-  schedule_expression = "rate(${var.interval})"
+  schedule_expression = var.interval
 
   tags = {
     terraform = "true"

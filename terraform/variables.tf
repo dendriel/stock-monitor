@@ -30,7 +30,7 @@ variable email_subscriber {
 
 variable interval {
   type        = string
-  description = "Interval between executions. It must be specified as the value of a 'rate expression' https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#RateExpressions"
+  description = "Interval between executions. It can be specified both as a rate (ex.: rate(15 minutes)) or cron (ex.: cron(0/10 9-18 ? * MON-FRI *)) expression. https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html"
 }
 
 variable prices_provider {

@@ -178,4 +178,6 @@ deleting the ENIs after that. Then, re-execute terraform destroy command.
 
 ### Resources Diagram
 
+Visual representation of everything created/configured via terraform deploy in AWS:
+
 ![Resources Diagram](doc/stock_monitor_aws_resources.png)
