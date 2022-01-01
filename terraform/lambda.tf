@@ -24,7 +24,7 @@ resource "aws_lambda_function" "this" {
 
   vpc_config {
     subnet_ids         = module.vpc.private_subnets
-    security_group_ids = [aws_security_group.this.id]
+    security_group_ids = [aws_security_group.stock_monitor_lambda.id]
   }
 
   depends_on = [
@@ -37,7 +37,7 @@ resource "aws_lambda_function" "this" {
   }
 }
 
-resource "aws_security_group" "this" {
+resource "aws_security_group" "stock_monitor_lambda" {
   name        = "Stock Monitor"
   description = "Egress Only"
   vpc_id      = module.vpc.vpc_id
