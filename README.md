@@ -49,7 +49,7 @@ A monitoring configuration file stored in S3 is just a set of conditions:
 
 ### Sketch
 
-![Config Creator Architecture](doc/stock_monitor_arch.png)
+![Architecture Sketch](doc/stock_monitor_arch.png)
 
 The solution has the following components:
 - **Stock Data Provider** - third party provider from which stock price data is retrieved
@@ -59,12 +59,12 @@ The solution has the following components:
 
 ### Expanded
 
-![Config Creator Architecture](doc/stock_monitor_arch_expanded.png)
+![Architecture Expanded](doc/stock_monitor_arch_expanded.png)
 
 
 ## Solution Flowchart
 
-![Config Creator Architecture](doc/stock_monitor_flowchart.png)
+![Solution Flowchart](doc/stock_monitor_flowchart.png)
 
 1. **Get CFG from S3** - retrieve monitoring configuration from S3 bucket
 2. **If there is no conditions** to test, just **finish**;
@@ -175,3 +175,7 @@ stuck while removing the Security Group because there is attached ENIs to it. To
 the Security Group to get the list of ENIs to remove them (if they show as in use, just wait a few minutes before 
 retrying). If is not possible to remove the ENIs even after waiting, stop terraform destroy operation and retry 
 deleting the ENIs after that. Then, re-execute terraform destroy command.
+
+### Resources Diagram
+
+![Resources Diagram](doc/stock_monitor_aws_resources.png)
