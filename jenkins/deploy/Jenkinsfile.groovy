@@ -7,14 +7,16 @@ pipeline {
                 checkout scm
             }
         }
+        stage('Initialize') {
+            steps {
+                echo 'initializing...'
+                npm init
+            }
+        }
         stage('Test') {
             steps {
                 echo 'testing...'
-            }
-        }
-        stage('Build') {
-            steps {
-                echo 'clonning...'
+                npm test
             }
         }
         stage('Deploy') {
