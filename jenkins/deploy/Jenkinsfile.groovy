@@ -15,13 +15,13 @@ pipeline {
         stage('Initialize') {
             steps {
                 echo 'initializing...'
-                npm install
+                sh 'npm install'
             }
         }
         stage('Test') {
             steps {
                 echo 'testing...'
-                npm test
+                sh 'npm test'
             }
         }
         stage('Deploy') {
